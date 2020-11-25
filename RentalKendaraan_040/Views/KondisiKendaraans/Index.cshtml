@@ -1,17 +1,17 @@
-﻿@model PaginatedList<RentalKendaraan_040.Models.JenisKendaraan>
+﻿@model PaginatedList<RentalKendaraan_040.Models.KondisiKendaraan>
 
 @{ ViewData["Title"] = "Index"; }
 
-<h2>Jenis Kendaraan</h2>
+<h2>Kondisi Kendaraan</h2>
 
 <p>
 	<a asp-action="Create">Tambah Data Baru</a>
 </p>
 
-@using (Html.BeginForm("Index", "JenisKendaraans", FormMethod.Get))
+@using (Html.BeginForm("Index", "KondisiKendaraans", FormMethod.Get))
 {
 <p>
-	Ketersediaan: @Html.DropDownList("ktsd", "Pilih jenis kendaraan")
+	Ketersediaan: @Html.DropDownList("ktsd", "Pilih kondisi")
 	Cari Data : @Html.TextBox("searchString")
 	<input type="submit" value="Filter" />
 </p>}
@@ -20,9 +20,9 @@
 	<thead>
 		<tr>
 			<th>
-				@*Html.DisplayNameFor(model => model.NamaJenisKendaraan)*@
+				@*Html.DisplayNameFor(model => model.NamaKondisi)*@
 				<a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">
-					Jenis Kendaraan
+					Kondisi
 				</a>
 			</th>
 			<th></th>
@@ -33,12 +33,12 @@
 		{
 <tr>
 	<td>
-		@Html.DisplayFor(modelItem => item.NamaJenisKendaraan)
+		@Html.DisplayFor(modelItem => item.NamaKondisi)
 	</td>
 	<td>
-		<a asp-action="Edit" asp-route-id="@item.IdJenisKendaraan">Edit</a> |
-		<a asp-action="Details" asp-route-id="@item.IdJenisKendaraan">Details</a> |
-		<a asp-action="Delete" asp-route-id="@item.IdJenisKendaraan">Delete</a>
+		<a asp-action="Edit" asp-route-id="@item.IdKondisi">Edit</a> |
+		<a asp-action="Details" asp-route-id="@item.IdKondisi">Details</a> |
+		<a asp-action="Delete" asp-route-id="@item.IdKondisi">Delete</a>
 	</td>
 </tr>}
 	</tbody>

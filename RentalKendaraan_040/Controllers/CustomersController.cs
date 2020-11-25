@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RentalKendaraan_040.Models;
 
-namespace RentalKendaraan_040.Controllers
+namespace RentalKendaraan_093.Controllers
 {
     public class CustomersController : Controller
     {
@@ -19,10 +19,74 @@ namespace RentalKendaraan_040.Controllers
         }
 
         // GET: Customers
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string ktsd, string searchString, string sortOrder, string currentFilter, int? pageNumber)
         {
-            var rentKendaraanContext = _context.Customer.Include(c => c.IdCustomerNavigation);
-            return View(await rentKendaraanContext.ToListAsync());
+            //buat list menyimpan ketersediaan
+            var ktsdList = new List<string>();
+            //Query mengambil data
+            var ktsdQuery = from d in _context.Customer orderby d.NamaCustomer select d.NamaCustomer;
+
+            ktsdList.AddRange(ktsdQuery.Distinct());
+
+            //untuk menampilkan di view
+            ViewBag.ktsd = new SelectList(ktsdList);
+
+            //panggil db context
+            var menu = from m in _context.Customer.Include(k => k.IdGenderNavigation) select m;
+
+            //untuk memilih dropdownlist ketersediaan
+            if (!string.IsNullOrEmpty(ktsd))
+            {
+                menu = menu.Where(x => x.NamaCustomer == ktsd);
+            }
+
+            //untuk search data
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                menu = menu.Where(s => s.Alamat.Contains(searchString) || s.NamaCustomer.Contains(searchString)
+                || s.IdGender.ToString().Contains(searchString) || s.Nik.Contains(searchString) || s.NoHp.Contains(searchString));
+            }
+
+            //untuk sorting
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    menu = menu.OrderByDescending(s => s.NamaCustomer);
+                    break;
+                case "Date":
+                    menu = menu.OrderBy(s => s.IdGenderNavigation.NamaGender);
+                    break;
+                case "date_desc":
+                    menu = menu.OrderByDescending(s => s.IdGenderNavigation.NamaGender);
+                    break;
+                default:
+                    menu = menu.OrderBy(s => s.NamaCustomer);
+                    break;
+            }
+
+            //membuat pagedList
+            ViewData["CurrentSort"] = sortOrder;
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
+            //definisi jumlah data pada halaman
+            int pageSize = 5;
+
+            return View(await PaginatedList<Customer>.CreateAsync(menu.AsNoTracking(), pageNumber ?? 1, pageSize));
+
+            //var rentKendaraanContext = _context.Customer.Include(c => c.IdGenderNavigation);
+            //return View(await rentKendaraanContext.ToListAsync());
         }
 
         // GET: Customers/Details/5
@@ -34,7 +98,7 @@ namespace RentalKendaraan_040.Controllers
             }
 
             var customer = await _context.Customer
-                .Include(c => c.IdCustomerNavigation)
+                .Include(c => c.IdGenderNavigation)
                 .FirstOrDefaultAsync(m => m.IdCustomer == id);
             if (customer == null)
             {
@@ -47,7 +111,7 @@ namespace RentalKendaraan_040.Controllers
         // GET: Customers/Create
         public IActionResult Create()
         {
-            ViewData["IdCustomer"] = new SelectList(_context.Gender, "IdGender", "IdGender");
+            ViewData["IdGender"] = new SelectList(_context.Gender, "IdGender", "IdGender");
             return View();
         }
 
@@ -64,7 +128,7 @@ namespace RentalKendaraan_040.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdCustomer"] = new SelectList(_context.Gender, "IdGender", "IdGender", customer.IdCustomer);
+            ViewData["IdGender"] = new SelectList(_context.Gender, "IdGender", "IdGender", customer.IdGender);
             return View(customer);
         }
 
@@ -81,7 +145,7 @@ namespace RentalKendaraan_040.Controllers
             {
                 return NotFound();
             }
-            ViewData["IdCustomer"] = new SelectList(_context.Gender, "IdGender", "IdGender", customer.IdCustomer);
+            ViewData["IdGender"] = new SelectList(_context.Gender, "IdGender", "IdGender", customer.IdGender);
             return View(customer);
         }
 
@@ -117,7 +181,7 @@ namespace RentalKendaraan_040.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdCustomer"] = new SelectList(_context.Gender, "IdGender", "IdGender", customer.IdCustomer);
+            ViewData["IdGender"] = new SelectList(_context.Gender, "IdGender", "IdGender", customer.IdGender);
             return View(customer);
         }
 
@@ -130,7 +194,7 @@ namespace RentalKendaraan_040.Controllers
             }
 
             var customer = await _context.Customer
-                .Include(c => c.IdCustomerNavigation)
+                .Include(c => c.IdGenderNavigation)
                 .FirstOrDefaultAsync(m => m.IdCustomer == id);
             if (customer == null)
             {

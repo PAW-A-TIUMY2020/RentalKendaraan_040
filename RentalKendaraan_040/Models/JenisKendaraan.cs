@@ -12,7 +12,8 @@ namespace RentalKendaraan_040.Models
         }
 
         public int IdJenisKendaraan { get; set; }
-        [Required(ErrorMessage = "Nama JenisKendaraan tidak boleh kosong")]
+
+        [Required(ErrorMessage = "Nama Jenis Kendaraan tidak boleh kosong!!")]
         public string NamaJenisKendaraan { get; set; }
 
         public ICollection<Kendaraan> Kendaraan { get; set; }

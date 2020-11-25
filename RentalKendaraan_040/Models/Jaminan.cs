@@ -12,7 +12,8 @@ namespace RentalKendaraan_040.Models
         }
 
         public int IdJaminan { get; set; }
-        [Required(ErrorMessage = "Nama IdJaminan  tidak boleh kosong")]
+
+        [Required(ErrorMessage = "Nama Jaminan tidak boleh kosong!!")]
         public string NamaJaminan { get; set; }
 
         public ICollection<Peminjaman> Peminjaman { get; set; }

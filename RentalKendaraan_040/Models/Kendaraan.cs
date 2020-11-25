@@ -1,25 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace RentalKendaraan_040.Models
 {
     public partial class Kendaraan
     {
+        public Kendaraan()
+        {
+            Peminjaman = new HashSet<Peminjaman>();
+        }
+
         public int IdKendaraan { get; set; }
-        [Required(ErrorMessage = "Nama NamaKendaraan tidak boleh kosong")]
+
+        [Required(ErrorMessage = "Nama Kendaraan tidak boleh kosong!!")]
         public string NamaKendaraan { get; set; }
-        [MinLength(1, ErrorMessage = "NOPolisi minimal 1 angka")]
-        [MaxLength(4, ErrorMessage = "NOPolisi maksimal 4 angka")]
+
+        [Required(ErrorMessage = "No Polisi tidak boleh kosong!!")]
         public string NoPolisi { get; set; }
-        [MinLength(1, ErrorMessage = "NoStnk minimal 1 angka")]
-        [MaxLength(4, ErrorMessage = "NoStnk maksimal 4 angka")]
+
+
+        //[RegularExpression("^[0-9]^$", ErrorMessage = "No STNK hanya boleh di isi dengan angka")]
+        [MinLength(6, ErrorMessage = "No STNK minimal 6 angka")]
+        [MaxLength(8, ErrorMessage = "No STNK maksimal 8 angka")]
+        [Required(ErrorMessage = "No STNK tidak boleh kosong!!")]
         public string NoStnk { get; set; }
+
         public int? IdJenisKendaraan { get; set; }
-        [Required(ErrorMessage = "Ketersediaan tidak boleh kosong")]
+
+        [Required(ErrorMessage = "Ketersedian tidak boleh kosong!!")]
+        //[RegularExpression("^[0-9]^$", ErrorMessage = "No STNK hanya boleh di isi dengan angka")]
         public string Ketersediaan { get; set; }
 
+        [DisplayName("JenisKendaraan")]
         public JenisKendaraan IdJenisKendaraanNavigation { get; set; }
-        public Peminjaman Peminjaman { get; set; }
+        public ICollection<Peminjaman> Peminjaman { get; set; }
     }
 }

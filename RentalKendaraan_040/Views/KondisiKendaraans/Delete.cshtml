@@ -1,4 +1,4 @@
-﻿@model RentalKendaraan_040.Models.Jaminan
+﻿@model RentalKendaraan_040.Models.KondisiKendaraan
 
 @{ ViewData["Title"] = "Delete"; }
 
@@ -6,19 +6,19 @@
 
 <h3>Are you sure you want to delete this?</h3>
 <div>
-	<h4>Jaminan</h4>
+	<h4>KondisiKendaraan</h4>
 	<hr />
 	<dl class="dl-horizontal">
 		<dt>
-			@Html.DisplayNameFor(model => model.NamaJaminan)
+			@Html.DisplayNameFor(model => model.NamaKondisi)
 		</dt>
 		<dd>
-			@Html.DisplayFor(model => model.NamaJaminan)
+			@Html.DisplayFor(model => model.NamaKondisi)
 		</dd>
 	</dl>
 
 	<form asp-action="Delete">
-		<input type="hidden" asp-for="IdJaminan" />
+		<input type="hidden" asp-for="IdKondisi" />
 		<input type="submit" value="Delete" class="btn btn-default" /> |
 		<a asp-action="Index">Back to List</a>
 	</form>

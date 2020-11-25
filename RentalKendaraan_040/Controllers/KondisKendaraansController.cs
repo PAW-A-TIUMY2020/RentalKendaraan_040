@@ -7,24 +7,79 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RentalKendaraan_040.Models;
 
-namespace RentalKendaraan_040.Controllers
+namespace RentalKendaraan_093.Controllers
 {
-    public class KondisKendaraansController : Controller
+    public class KondisiKendaraansController : Controller
     {
         private readonly RentKendaraanContext _context;
 
-        public KondisKendaraansController(RentKendaraanContext context)
+        public KondisiKendaraansController(RentKendaraanContext context)
         {
             _context = context;
         }
 
-        // GET: KondisKendaraans
-        public async Task<IActionResult> Index()
+        // GET: KondisiKendaraans
+        public async Task<IActionResult> Index(string ktsd, string searchString, string sortOrder, string currentFilter, int? pageNumber)
         {
-            return View(await _context.KondisKendaraan.ToListAsync());
+            //buat list menyimpan ketersediaan
+            var ktsdList = new List<string>();
+            //Query mengambil data
+            var ktsdQuery = from d in _context.KondisiKendaraan orderby d.NamaKondisi select d.NamaKondisi;
+
+            ktsdList.AddRange(ktsdQuery.Distinct());
+
+            //untuk menampilkan di view
+            ViewBag.ktsd = new SelectList(ktsdList);
+
+            //panggil db context
+            var menu = from m in _context.KondisiKendaraan select m;
+
+            //untuk memilih dropdownlist ketersediaan
+            if (!string.IsNullOrEmpty(ktsd))
+            {
+                menu = menu.Where(x => x.NamaKondisi == ktsd);
+            }
+
+            //untuk search data
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                menu = menu.Where(s => s.NamaKondisi.Contains(searchString));
+            }
+
+            //untuk sorting
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    menu = menu.OrderByDescending(s => s.NamaKondisi);
+                    break;
+                default:
+                    menu = menu.OrderBy(s => s.NamaKondisi);
+                    break;
+            }
+
+            //membuat pagedList
+            ViewData["CurrentSort"] = sortOrder;
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
+            //definisi jumlah data pada halaman
+            int pageSize = 5;
+
+            return View(await PaginatedList<KondisiKendaraan>.CreateAsync(menu.AsNoTracking(), pageNumber ?? 1, pageSize));
+            //return View(await _context.KondisiKendaraan.ToListAsync());
         }
 
-        // GET: KondisKendaraans/Details/5
+        // GET: KondisiKendaraans/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -32,39 +87,39 @@ namespace RentalKendaraan_040.Controllers
                 return NotFound();
             }
 
-            var kondisKendaraan = await _context.KondisKendaraan
+            var kondisiKendaraan = await _context.KondisiKendaraan
                 .FirstOrDefaultAsync(m => m.IdKondisi == id);
-            if (kondisKendaraan == null)
+            if (kondisiKendaraan == null)
             {
                 return NotFound();
             }
 
-            return View(kondisKendaraan);
+            return View(kondisiKendaraan);
         }
 
-        // GET: KondisKendaraans/Create
+        // GET: KondisiKendaraans/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: KondisKendaraans/Create
+        // POST: KondisiKendaraans/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdKondisi,NamaKondisi")] KondisKendaraan kondisKendaraan)
+        public async Task<IActionResult> Create([Bind("IdKondisi,NamaKondisi")] KondisiKendaraan kondisiKendaraan)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(kondisKendaraan);
+                _context.Add(kondisiKendaraan);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(kondisKendaraan);
+            return View(kondisiKendaraan);
         }
 
-        // GET: KondisKendaraans/Edit/5
+        // GET: KondisiKendaraans/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -72,22 +127,22 @@ namespace RentalKendaraan_040.Controllers
                 return NotFound();
             }
 
-            var kondisKendaraan = await _context.KondisKendaraan.FindAsync(id);
-            if (kondisKendaraan == null)
+            var kondisiKendaraan = await _context.KondisiKendaraan.FindAsync(id);
+            if (kondisiKendaraan == null)
             {
                 return NotFound();
             }
-            return View(kondisKendaraan);
+            return View(kondisiKendaraan);
         }
 
-        // POST: KondisKendaraans/Edit/5
+        // POST: KondisiKendaraans/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdKondisi,NamaKondisi")] KondisKendaraan kondisKendaraan)
+        public async Task<IActionResult> Edit(int id, [Bind("IdKondisi,NamaKondisi")] KondisiKendaraan kondisiKendaraan)
         {
-            if (id != kondisKendaraan.IdKondisi)
+            if (id != kondisiKendaraan.IdKondisi)
             {
                 return NotFound();
             }
@@ -96,12 +151,12 @@ namespace RentalKendaraan_040.Controllers
             {
                 try
                 {
-                    _context.Update(kondisKendaraan);
+                    _context.Update(kondisiKendaraan);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!KondisKendaraanExists(kondisKendaraan.IdKondisi))
+                    if (!KondisiKendaraanExists(kondisiKendaraan.IdKondisi))
                     {
                         return NotFound();
                     }
@@ -112,10 +167,10 @@ namespace RentalKendaraan_040.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(kondisKendaraan);
+            return View(kondisiKendaraan);
         }
 
-        // GET: KondisKendaraans/Delete/5
+        // GET: KondisiKendaraans/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -123,30 +178,30 @@ namespace RentalKendaraan_040.Controllers
                 return NotFound();
             }
 
-            var kondisKendaraan = await _context.KondisKendaraan
+            var kondisiKendaraan = await _context.KondisiKendaraan
                 .FirstOrDefaultAsync(m => m.IdKondisi == id);
-            if (kondisKendaraan == null)
+            if (kondisiKendaraan == null)
             {
                 return NotFound();
             }
 
-            return View(kondisKendaraan);
+            return View(kondisiKendaraan);
         }
 
-        // POST: KondisKendaraans/Delete/5
+        // POST: KondisiKendaraans/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var kondisKendaraan = await _context.KondisKendaraan.FindAsync(id);
-            _context.KondisKendaraan.Remove(kondisKendaraan);
+            var kondisiKendaraan = await _context.KondisiKendaraan.FindAsync(id);
+            _context.KondisiKendaraan.Remove(kondisiKendaraan);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool KondisKendaraanExists(int id)
+        private bool KondisiKendaraanExists(int id)
         {
-            return _context.KondisKendaraan.Any(e => e.IdKondisi == id);
+            return _context.KondisiKendaraan.Any(e => e.IdKondisi == id);
         }
     }
 }
