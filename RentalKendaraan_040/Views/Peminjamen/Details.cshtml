@@ -1,60 +1,46 @@
 ﻿@model RentalKendaraan_040.Models.Peminjaman
 
-@{
-    ViewData["Title"] = "Details";
-}
+@{ ViewData["Title"] = "Details"; }
 
-<h2>Details</h2>
+<h2>Detail Data</h2>
 
 <div>
-    <h4>Peminjaman</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.TglPeminjaman)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.TglPeminjaman)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.IdKendaraan)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.IdKendaraan)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.IdJaminan)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.IdJaminan)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Biaya)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Biaya)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.IdCustomerNavigation)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.IdCustomerNavigation.IdJaminan)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.IdPeminjamam1)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.IdPeminjamam1.IdKendaraan)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.IdPeminjamamNavigation)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.IdPeminjamamNavigation.IdCustomer)
-        </dd>
-    </dl>
+	<h4>Peminjaman</h4>
+	<hr />
+	<dl class="dl-horizontal">
+		<dt>
+			@Html.DisplayNameFor(model => model.TglPeminjaman)
+		</dt>
+		<dd>
+			@Html.DisplayFor(model => model.TglPeminjaman)
+		</dd>
+		<dt>
+			@Html.DisplayNameFor(model => model.Biaya)
+		</dt>
+		<dd>
+			@Html.DisplayFor(model => model.Biaya)
+		</dd>
+		<dt>
+			@Html.DisplayNameFor(model => model.IdCustomerNavigation)
+		</dt>
+		<dd>
+			@Html.DisplayFor(model => model.IdCustomerNavigation.IdCustomer)
+		</dd>
+		<dt>
+			@Html.DisplayNameFor(model => model.IdJaminanNavigation)
+		</dt>
+		<dd>
+			@Html.DisplayFor(model => model.IdJaminanNavigation.IdJaminan)
+		</dd>
+		<dt>
+			@Html.DisplayNameFor(model => model.IdKendaraanNavigation)
+		</dt>
+		<dd>
+			@Html.DisplayFor(model => model.IdKendaraanNavigation.IdKendaraan)
+		</dd>
+	</dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.IdPeminjamam">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+	<a asp-action="Edit" asp-route-id="@Model.IdPeminjaman">Udah</a> |
+	<a asp-action="Index">Kembali</a>
 </div>
